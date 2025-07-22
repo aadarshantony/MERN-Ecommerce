@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+@import 'tailwindcss';
+
+
+html {
+  font-family: 'Oswald', sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Oswald', sans-serif;
+}
+
+.btn-primary {
+  @apply px-6 py-2 rounded-full text-white bg-amber-400 hover:bg-amber-500 cursor-pointer transition;
+}
+
+.btn-outline {
+  @apply px-6 py-2 rounded-full text-black border bg-transparent hover:bg-gray-300 cursor-pointer transition;
+}
