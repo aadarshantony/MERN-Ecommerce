@@ -1,17 +1,17 @@
 import React from 'react'
 
-const ProductDetails = () => {
+const ProductDetails = ({ product }) => {
     return (
         <div className='w-full p-4'>
             {/*Product name and category */}
             <div>
-                <h2 className='text-3xl font-normal'>Lady Top</h2>
-                <p className='font-light text-md pt-4'>Womens Wear</p>
+                <h2 className='text-3xl font-normal'>{product.name}</h2>
+                <p className='font-light text-md pt-4'>{product.category}</p>
             </div>
 
             {/*Price Section & Rating*/}
             <div className='mt-3'>
-                <p className='text-green-500 text-xl'>$49.99 <span className='text-gray-400 line-through text-sm'>$79.99</span></p>
+                <p className='text-green-500 text-xl'>{product.price}<span className='text-gray-400 line-through text-sm'>$79.99</span></p>
             </div>
 
             {/*Offer section */}
@@ -28,7 +28,7 @@ const ProductDetails = () => {
             <div className='mt-6'>
                 <div>
                     <h2 className='text-xl font-normal'>Description</h2>
-                    <p className='font-light mt-2'>This lady top is made with high-quality materials and fits perfectly for any occasion. Stylish, comfortable, and a must-have in your wardrobe.</p>
+                    <p className='font-light mt-2'>{product.description}</p>
                 </div>
             </div>
 

@@ -7,7 +7,7 @@ const ProtectedAdminRoute = ({ children }) => {
 
     if (isLoading) return <LoadingScreen />;
 
-    if(!user ) return <Navigate to={'/login'} replace/>
+    if(!user ) return <Page403 />
     if(user.role !== "admin") return <Page403 />
 
     return children;

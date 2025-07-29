@@ -1,12 +1,12 @@
 import { useAuth } from "../context/AuthContext"
 import LoadingScreen from '../components/LoadingScreen'
-import { Navigate  } from "react-router-dom";
+import Page401 from "./Page401"
 const ProtectedRoute = ({ children }) => {
     const { user, isLoading } = useAuth();
 
     if (isLoading) return <LoadingScreen />;
 
-    if(!user) return <Navigate to={'/login'} replace/>
+    if (!user) return <Page401 />
 
     return children;
 }

@@ -13,8 +13,16 @@ const getProducts = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const product = req.body;
-        const newProduct = new Product(product);
+        const { name, description, price, category, stock, thumbnail, gallery } = req.body;
+        const newProduct = new Product({
+            name,
+            description,
+            price,
+            stock,
+            category,
+            thumbnail,
+            gallery,
+        });
         await newProduct.save();
 
         res.status(201).json({ message: 'newProduct saved', product: newProduct })

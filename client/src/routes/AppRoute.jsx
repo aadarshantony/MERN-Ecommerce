@@ -15,26 +15,27 @@ const AppRoute = () => {
   return (
     <>
       <Routes>
-
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
-          
+
+          {/*PRODUCT ROUTES */}
           <Route path="/products" element={
             <ProtectedRoute>
               <ProdcutsView />
             </ProtectedRoute>
           } />
-          <Route path="/products/id" element={
+          <Route path="/products/:id" element={
             <ProtectedRoute>
               <Product />
             </ProtectedRoute>
           } />
 
+          {/*AUTHENTICATION ROUTE */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
         </Route>
-
-
+        
+        {/*404 PAGE ROUTE */}
         <Route path="*" element={<Page404 />} />
       </Routes>
     </>
