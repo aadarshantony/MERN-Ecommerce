@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/userSchema');
 
-const protect = (req, res, next) => {
+const protect = async (req, res, next) => {
     const token = req.cookies.token
 
     if (!token)
@@ -8,7 +9,12 @@ const protect = (req, res, next) => {
 
     try {
         const decodedUser = jwt.verify(token, process.env.JWT_SECRET)
-        req.user = decodedUser
+        const user = await User.findById(decodedUser.id).select('_id name email role');
+
+        if (!user)
+            return res.status(401).json({ message: "User not found." });
+
+        req.user = user;
         next();
 
     } catch (err) {

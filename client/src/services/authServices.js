@@ -25,8 +25,17 @@ export const loginUser = async (credentials) => {
 export const logoutUser = async () => {
   try {
     const res = await api.post('/auth/logout');
-    
+
     return res
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+}
+
+export const getUser = async () => {
+  try {
+    const res = await api.get('/auth/me');
+    return res.data
   } catch (err) {
     throw err.response?.data || err;
   }
