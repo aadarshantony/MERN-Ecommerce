@@ -20,6 +20,16 @@ export const addToCart = async (productId) => {
     }
 }
 
+export const updateCartQty = async ({ productId, qty }) => {
+    try {
+        const res = await api.patch(`/cart/${productId}`, { qty });
+        return res.data;
+    } catch (err) {
+        console.error(err);
+        throw err.response?.data || err;
+    }
+}
+
 export const deleteFromCart = async (productId) => {
     try {
         const res = await api.delete(`/cart/${productId}`);

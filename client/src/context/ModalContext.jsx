@@ -12,7 +12,6 @@ export const ModalProvider = ({ children }) => {
 
   const toggleCart = () => {
     setIsCartOpen(prev => !prev);
-    console.log("Cart toggled", isCartOpen);
   };
 
   const openModal = (modalName, productId = null) => {

@@ -1,39 +1,90 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useModal } from '../../context/ModalContext';
-import { deleteFromCart, getCartItems } from '../../services/cartServices';
+import { deleteFromCart, getCartItems, updateCartQty } from '../../services/cartServices';
 import LoadingSpinner from '../LoadingSpinner';
 import InternalServerError from '../InternalServerError';
 import toast from 'react-hot-toast';
+import { useEffect, useState } from 'react';
 
 const CartSidebar = () => {
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
     const { toggleCart, isCartOpen } = useModal();
 
-    const { data, isLoading, isError, error } = useQuery({
+    const [quantities, setQuantities] = useState({});
+
+    const { data, isLoading, isError, error, } = useQuery({
         queryKey: ['cart'],
         queryFn: getCartItems,
         refetchOnWindowFocus: false,
         refetchOnMount: true
     });
 
+    const { mutate: updateQuantity } = useMutation({
+        mutationFn: updateCartQty,
+        onSuccess: () => {
+            queryClient.invalidateQueries(['cart']);
+        },
+        onError: (err) => {
+            toast.error(err?.message || 'Failed to update quantity');
+        }
+    });
+
+
+    useEffect(() => {
+        if (data?.cart?.items) {
+            const initial = {};
+            data.cart.items.forEach(item => {
+                initial[item.product._id] = item.quantity;
+            });
+            setQuantities(initial);
+        }
+    }, [data]);
+
     const cartDeleteHandler = async (productId) => {
         try {
-            await deleteFromCart(productId)
+            await deleteFromCart(productId);
             await queryClient.invalidateQueries(['cart']);
             toast.success('Product removed from cart');
         } catch (err) {
-            console.log("Error removing product from cart: ", err)
+            console.log("Error removing product from cart: ", err);
             toast.error(err?.message);
         }
+    };
 
-    }
+    const incrementQty = (productId) => {
+        const item = cartItems.find(item => item.product._id === productId);
+        const currentQty = quantities[productId] || item.quantity;
+        const maxStock = item.product.stock;
+
+        if (currentQty < maxStock) {
+            const newQty = currentQty + 1;
+            setQuantities(prev => ({ ...prev, [productId]: newQty }));
+            updateQuantity({ productId, qty: newQty });
+        } else {
+            toast.error(`Only ${maxStock} in stock`);
+        }
+    };
+
+
+    const decrementQty = (productId) => {
+        const item = cartItems.find(item => item.product._id === productId);
+        const currentQty = quantities[productId] || item.quantity;
+
+        if (currentQty > 1) {
+            const newQty = currentQty - 1;
+            setQuantities(prev => ({ ...prev, [productId]: newQty }));
+            updateQuantity({ productId, qty: newQty });
+        }
+    };
+
 
     if (!isCartOpen) return null;
 
     const cartItems = data?.cart.items || [];
 
     const totalPrice = cartItems.reduce((acc, item) => {
-        return acc + item.product.price * item.quantity;
+        const qty = quantities[item.product._id] || item.quantity;
+        return acc + item.product.price * qty;
     }, 0);
 
     return (
@@ -68,27 +119,32 @@ const CartSidebar = () => {
                         ) : (
                             <>
                                 <div className="space-y-4 overflow-y-auto max-h-[70vh] pr-1">
-                                    {cartItems.map(item => (
-                                        <div key={item.product._id} className="flex items-center justify-between border border-gray-200 rounded-lg shadow-lg p-2">
-                                            <img
-                                                src={item.product.thumbnail}
-                                                alt={item.product.name}
-                                                className="w-16 h-16 object-cover rounded"
-                                            />
+                                    {cartItems.map(item => {
+                                        const productId = item.product._id;
+                                        const quantity = quantities[productId] || item.quantity;
 
-                                            <div className="flex-1 px-4">
-                                                <p className="font-medium text-gray-700 mb-2">{item.product.name}</p>
-                                                <div className="flex items-center gap-2">
-                                                    <button className="px-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer">-</button>
-                                                    <span className="text-sm font-medium">{item.quantity}</span>
-                                                    <button className="px-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer">+</button>
-                                                    <i onClick={() => cartDeleteHandler(item.product._id)} className="fas fa-trash text-red-500 ml-1 p-1 rounded text-sm cursor-pointer hover:border hover:border-red-400"></i>
+                                        return (
+                                            <div key={productId} className="flex items-center justify-between border border-gray-200 rounded-lg shadow-lg p-2">
+                                                <img
+                                                    src={item.product.thumbnail}
+                                                    alt={item.product.name}
+                                                    className="w-16 h-16 object-cover rounded"
+                                                />
+
+                                                <div className="flex-1 px-4">
+                                                    <p className="font-medium text-gray-700 mb-2">{item.product.name}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <button onClick={() => decrementQty(productId)} className="px-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer">-</button>
+                                                        <span className="text-sm font-medium">{quantity}</span>
+                                                        <button onClick={() => incrementQty(productId)} className="px-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer">+</button>
+                                                        <i onClick={() => cartDeleteHandler(productId)} className="fas fa-trash text-red-500 ml-1 p-1 rounded text-sm cursor-pointer hover:border hover:border-red-400"></i>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <p className="text-gray-800 font-semibold">₹{item.product.price}</p>
-                                        </div>
-                                    ))}
+                                                <p className="text-gray-800 font-semibold">₹{item.product.price}</p>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
 
                                 {/* Footer */}
@@ -108,6 +164,6 @@ const CartSidebar = () => {
             </div>
         </div>
     );
-};
+}
 
 export default CartSidebar;

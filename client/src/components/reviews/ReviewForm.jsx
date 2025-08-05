@@ -48,7 +48,6 @@ const ReviewForm = ({ productId }) => {
         try {
             await createReview(productId, review);
             toast.success("Added a review for the current product!");
-            console.log('Rating Submitted:', review);
             await queryClient.invalidateQueries(['reviews', productId]);
             reset()
             setRating(0)
