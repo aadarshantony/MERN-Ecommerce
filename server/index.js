@@ -1,11 +1,12 @@
 const dotenv = require('dotenv')
 const express = require('express');
-const cors= require('cors');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 //Route & File Imports
 const productRoutes = require('./routes/productRoutes');
 const authRoutes = require('./routes/authRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 const connectDB = require('./config/db');
 
 dotenv.config();
@@ -18,11 +19,12 @@ app.use(cors({
 }));
 app.use(cookieParser())
 app.use(express.json());
+
 //Routes
 app.use('/api/products', productRoutes)
 app.use('/api/auth', authRoutes);
+app.use('/api/cart', cartRoutes);
 
-
-app.listen(process.env.PORT, ()=>{
+app.listen(process.env.PORT, () => {
     console.log(`Listening to localhost:${process.env.PORT}/api`);
 })

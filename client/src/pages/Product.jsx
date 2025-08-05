@@ -1,6 +1,6 @@
 import ProductDetails from '../components/product/ProductDetails'
 import FeaturedProducts from '../components/product/FeaturedProducts'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { getProductById } from '../services/productServices'
 import LoadingScreen from '../components/LoadingScreen'
@@ -10,8 +10,11 @@ import ReviewForm from '../components/reviews/ReviewForm'
 import ReviewBreakdown from '../components/reviews/ReviewBreakdown'
 import ReviewDisplay from '../components/reviews/ReviewDisplay'
 import { getReviews } from '../services/reviewServices'
+import { addToCart } from '../services/cartServices'
+import toast from 'react-hot-toast'
 
 const Product = () => {
+    const queryClient = useQueryClient();
     const { id: productId } = useParams();
 
     const { data, isLoading, isError, error } = useQuery({
@@ -26,6 +29,18 @@ const Product = () => {
         enabled: !!productId,
     });
 
+
+    const { mutate: updateCart } = useMutation({
+        mutationFn: (id) => addToCart(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['cart']);
+            toast.success('Product added to cart!');
+        },
+        onError: (err) => {
+            console.error("Couldn't add product to cart: ", err);
+            toast.error(err?.message || 'Failed to add product to cart');
+        },
+    })
 
     return (
         <div className='max-w-screen-xl min-h-screen m-auto mt-30'>
@@ -52,7 +67,7 @@ const Product = () => {
                                     )
                                 }
 
-                                <button className=' bg-amber-300 w-full mt-4 h-10 rounded-md cursor-pointer hover:bg-amber-400'>Add to Cart <i className='fas fa-cart-shopping'></i></button>
+                                <button onClick={() => updateCart(productId)} className=' bg-amber-300 w-full mt-4 h-10 rounded-md cursor-pointer hover:bg-amber-400'>Add to Cart <i className='fas fa-cart-shopping'></i></button>
                             </aside>
                             <ProductDetails product={data.product} />
                         </section>
@@ -79,7 +94,7 @@ const Product = () => {
                                                     <ReviewBreakdown reviews={reviewData.reviews} />
                                                     <ReviewForm productId={productId} />
                                                 </div>
-                                                <ReviewDisplay reviews={reviewData.reviews} productId={productId}/>
+                                                <ReviewDisplay reviews={reviewData.reviews} productId={productId} />
                                             </>
                                         ) : (
                                             <div>
@@ -87,7 +102,7 @@ const Product = () => {
                                                 <ReviewForm productId={productId} />
                                             </div>
                                         )}
-                                        
+
                                     </>
                                 )
                             }

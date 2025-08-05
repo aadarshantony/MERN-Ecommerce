@@ -23,7 +23,7 @@ exports.createReview = async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
 
@@ -38,7 +38,7 @@ exports.getProductReview = async (req, res) => {
         res.status(200).json({ reviews: productReview });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
 
@@ -60,7 +60,7 @@ exports.deleteReview = async (req, res) => {
         res.status(200).json({ message: 'Review deleted successfully' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 
 }

@@ -8,6 +8,13 @@ export const ModalProvider = ({ children }) => {
     productId: null,
   });
 
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const toggleCart = () => {
+    setIsCartOpen(prev => !prev);
+    console.log("Cart toggled", isCartOpen);
+  };
+
   const openModal = (modalName, productId = null) => {
     setModalConfig({ modalName, productId });
   };
@@ -17,10 +24,13 @@ export const ModalProvider = ({ children }) => {
   };
 
   return (
-    <ModalContext.Provider value={{ modalConfig, openModal, closeModal }}>
+    <ModalContext.Provider
+      value={{ modalConfig, openModal, closeModal, isCartOpen, toggleCart }}
+    >
       {children}
     </ModalContext.Provider>
   );
 };
+
 
 export const useModal = () => useContext(ModalContext);

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body>
+    <!-- Cart Page -->
+    <!-- Toggle Button -->
+    <button onclick="openSidebar()" class="px-4 py-2 bg-blue-600 text-white rounded">
+        Open Sidebar
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-40 z-40 hidden" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div id="rightSidebar"
+        class="fixed right-0 top-0 h-full w-80 bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300">
+        <!-- Header -->
+        <div class="p-4 border-b flex items-center justify-between">
+            <h2 class="text-lg font-semibold">Sidebar Title</h2>
+            <button onclick="closeSidebar()" class="text-gray-600 hover:text-gray-900">&times;</button>
+        </div>
+
+        <!-- Content -->
+        <div class="p-4">
+            <!-- Cart Items Container -->
+            <div class="space-y-6">
+                <!-- Cart Item -->
+                <div class="flex flex-col sm:flex-row items-center justify-between bg-white shadow rounded-lg p-4">
+                    <div class="flex items-center gap-4">
+                        <img src="https://via.placeholder.com/80" alt="Product"
+                            class="w-20 h-20 object-cover rounded-md border" />
+                        <div>
+                            <h2 class="text-lg font-medium">Product Name</h2>
+                            <p class="text-sm text-gray-500">Category</p>
+                            <p class="text-sm font-semibold mt-1">₹999</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 flex items-center gap-4">
+                        <!-- Quantity Controls -->
+                        <button class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
+                        <span class="text-base font-medium">1</span>
+                        <button class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
+                        <!-- Remove -->
+                        <button class="ml-4 text-red-500 hover:underline">Remove</button>
+                    </div>
+                </div>
+
+                <!-- Repeat .cart-item div for more items -->
+            </div>
+
+            <!-- Summary & Checkout -->
+            <div class="mt-10 border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="text-lg font-medium">
+                    Subtotal: <span class="font-semibold text-primary">₹1998</span>
+                </div>
+                <button class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition-all">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSidebar() {
+            document.getElementById("rightSidebar").classList.remove("translate-x-full");
+            document.getElementById("sidebarOverlay").classList.remove("hidden");
+        }
+
+        function closeSidebar() {
+            document.getElementById("rightSidebar").classList.add("translate-x-full");
+            document.getElementById("sidebarOverlay").classList.add("hidden");
+        }
+    </script>
+
+</body>
+
+</html>

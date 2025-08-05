@@ -1,6 +1,6 @@
 const Product = require("../models/productSchema");
 
-const getProducts = async (req, res) => {
+exports.getProducts = async (req, res) => {
     try {
         const products = await Product.find({})
         res.status(200).json(products)
@@ -11,7 +11,7 @@ const getProducts = async (req, res) => {
 
 }
 
-const addProduct = async (req, res) => {
+exports.addProduct = async (req, res) => {
     try {
         const { name, description, price, category, stock, thumbnail, gallery } = req.body;
         const newProduct = new Product({
@@ -33,7 +33,7 @@ const addProduct = async (req, res) => {
 
 }
 
-const updateProduct = async (req, res) => {
+exports.updateProduct = async (req, res) => {
     try {
         const productId = req.params.id
         const updatedFields = req.body;
@@ -59,7 +59,7 @@ const updateProduct = async (req, res) => {
 }
 
 
-const deleteProduct = async (req, res) => {
+exports.deleteProduct = async (req, res) => {
     try {
         const productId = req.params.id
         const deletedProduct = await Product.findByIdAndDelete(productId);
@@ -78,7 +78,7 @@ const deleteProduct = async (req, res) => {
     }
 }
 
-const getIndividualProduct = async (req, res) => {
+exports.getIndividualProduct = async (req, res) => {
     try {
         const productId = req.params.id;
         if (!productId)
@@ -97,14 +97,4 @@ const getIndividualProduct = async (req, res) => {
         console.error('Error fetching a single product', err);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
-}
-
-
-
-module.exports = {
-    getProducts,
-    addProduct,
-    updateProduct,
-    deleteProduct,
-    getIndividualProduct,
 }

@@ -20,8 +20,9 @@ const Login = () => {
     const onSubmit = async (data) => {
         try {
             await loginUser(data);
-            toast.success("Successfully logged in!")
-            navigate('/products')
+            toast.success("Successfully logged in!");
+            await queryClient.invalidateQueries(['cart']);
+            navigate('/products');
         } catch (err) {
             console.error("Login failed: ", err.response?.data || err.message);
             toast.error(`Login Failed: ${err.message}`)
