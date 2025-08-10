@@ -55,28 +55,26 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: "Invalid Email or Password!" });
         }
 
-        // Generate JWT
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRES_IN }
         );
 
-
         const cookieValue = [
             `token=${token}`,
             "HttpOnly",
             process.env.NODE_ENV === "production" ? "Secure" : "",
             "SameSite=None",
+            "Partitioned",
             "Path=/",
-            `Max-Age=${24 * 60 * 60}`, // 1 day
+            `Max-Age=${24 * 60 * 60}`,
         ]
             .filter(Boolean)
             .join("; ");
 
         res.setHeader("Set-Cookie", cookieValue);
 
-        // Respond
         res.status(200).json({
             message: "Login successful",
             user: {
@@ -94,6 +92,7 @@ exports.login = async (req, res) => {
 };
 
 
+
 exports.logOut = (req, res) => {
     try {
         const clearCookieValue = [
@@ -101,8 +100,9 @@ exports.logOut = (req, res) => {
             "HttpOnly",
             process.env.NODE_ENV === "production" ? "Secure" : "",
             "SameSite=None",
+            "Partitioned",
             "Path=/",
-            "Max-Age=0",
+            "Max-Age=0", // delete immediately
         ]
             .filter(Boolean)
             .join("; ");
