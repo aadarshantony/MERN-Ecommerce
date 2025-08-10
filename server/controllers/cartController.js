@@ -4,6 +4,9 @@ const Cart = require("../models/cartSchema");
 exports.getCart = async (req, res) => {
     try {
         const userId = req.user.id;
+        if (!userId)
+            return res.status(500).json({ message: 'Please login to view cart' });
+        
         const userCart = await Cart.findOne({ user: userId })
             .populate('items.product');
         res.status(201).json({ message: "Fetched Cart", cart: userCart });
