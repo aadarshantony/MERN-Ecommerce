@@ -11,6 +11,6 @@ router.route('/login')
 router.route('/logout')
     .post(logOut);
 router.route('/me')
-    .get(getUser)
+    .get(protect, getUser)
 
 module.exports = router;
