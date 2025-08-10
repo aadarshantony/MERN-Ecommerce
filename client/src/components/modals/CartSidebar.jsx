@@ -92,7 +92,7 @@ const CartSidebar = () => {
 
     if (!isCartOpen) return null;
 
-    const cartItems = data?.cart.items || [];
+    const cartItems = data?.cart?.items || [];
 
     const totalPrice = cartItems.reduce((acc, item) => {
         const qty = quantities[item.product._id] || item.quantity;

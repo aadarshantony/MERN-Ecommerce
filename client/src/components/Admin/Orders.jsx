@@ -56,7 +56,7 @@ const Orders = () => {
                                 key={order._id}
                                 className="bg-white w-screen-xl shadow-md border border-gray-200 p-4 rounded-md"
                             >
-                                <div className="flex justify-between items-center mb-4">
+                                <div className="flex justify-between items-center mb-4 flex-wrap">
                                     <div>
                                         <h3 className="font-semibold text-lg">Order ID: <span className="text-gray-400">{order._id}</span></h3>
                                         <p className="text-gray-600 text-sm">Status: <span className="capitalize">{order.status}</span></p>
@@ -67,7 +67,7 @@ const Orders = () => {
                                             id={`orderstatus-${order._id}`}
                                             value={order.status}
                                             onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                                            className="border border-gray-300 rounded py-1"
+                                            className="border border-gray-300 rounded py-1 mt-3"
                                         >
                                             <option value="placed">Order Placed</option>
                                             <option value="confirmed">Order Confirmed</option>

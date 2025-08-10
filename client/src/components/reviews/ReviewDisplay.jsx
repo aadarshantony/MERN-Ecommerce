@@ -17,7 +17,7 @@ const ReviewDisplay = ({ reviews, productId }) => {
     }, []);
 
     return (
-        <div className="grid grid-cols-2 gap-3 mt-8">
+        <div className="lg:grid grid-cols-2 gap-3 mt-8">
             {reviews.map((review) => (
                 <ReviewCard key={review._id} review={review} userData={userData} productId={productId} />
             ))}

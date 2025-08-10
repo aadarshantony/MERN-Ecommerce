@@ -10,7 +10,7 @@ router.route('/')
     .post(protect, isAdmin, addProduct)
 
 router.route('/filter')
-    .get(protect, getFilteredProducts)
+    .get(getFilteredProducts)
 
 router.route('/:id')
     .get(protect, getIndividualProduct)

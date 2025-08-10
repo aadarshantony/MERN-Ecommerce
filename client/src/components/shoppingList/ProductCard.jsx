@@ -8,8 +8,7 @@ const ProductCard = ({ productId, name, category, image , price }) => {
             <h3 className="mt-4 font-semibold text-lg">{name}</h3>
             <p className="text-sm text-gray-500 mb-2">{category}</p>
             <div className="flex items-center justify-between">
-                <span className="text-yellow-500 font-bold">${price}</span>
-                <span className="text-xs text-gray-400">⭐ 4.5</span>
+                <span className="text-yellow-500 font-bold">₹{price}</span>
             </div>
         </Link>
     )

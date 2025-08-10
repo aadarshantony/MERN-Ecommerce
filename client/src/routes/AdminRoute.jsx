@@ -1,6 +1,4 @@
-import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import Dashboard from '../components/Admin/Dashboard'
 import Products from '../components/Admin/Products'
 import AdminLayout from '../pages/AdminLayout'
 import ProtectedAdminRoute from '../pages/ProtectedAdminRoute'

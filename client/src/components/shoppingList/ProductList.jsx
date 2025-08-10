@@ -25,11 +25,14 @@ const ProductList = ({ handleFilterMenu, products, isLoading, isError, error }) 
                                         image={product.thumbnail}
                                         category={product.category}
                                         price={product.price}
+                                        rating={product.rating}
                                     />
                                 ))}
                             </div>
                         ) : (
-                            <p className="p-4 text-gray-500">No match found</p>
+                            <div className='flex justify-center items-center'>
+                                <p className="p-4 text-gray-500">No Products found!</p>
+                            </div>
                         )
             }
         </div>

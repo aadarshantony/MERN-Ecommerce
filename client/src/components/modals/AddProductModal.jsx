@@ -110,8 +110,8 @@ const AddProductModal = () => {
 
     return (
         <div id="add-product-modal" tabIndex="-1" aria-hidden="true"
-            className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden flex justify-center items-center backdrop-brightness-50 backdrop-blur-sm">
-            <div className="relative w-full max-w-4xl p-4">
+            className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden flex justify-center px-4 py-6 backdrop-brightness-50 backdrop-blur-sm">
+            <div className="relative w-full max-w-4xl ">
                 <div className="relative bg-white rounded-xl shadow-lg">
                     <div className="flex items-center justify-between p-5 border-b border-gray-200">
                         <h3 className="text-xl font-semibold text-gray-800">Add New Product</h3>
