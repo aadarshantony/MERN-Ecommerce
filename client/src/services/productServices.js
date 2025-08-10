@@ -63,7 +63,6 @@ export const getFilteredProducts = async (filters) => {
         }
 
         const res = await api.get(`/products/filter?${params.toString()}`);
-        console.log("Filter response: ", res);
         return res.data.products;
     } catch (err) {
         console.error(err);
