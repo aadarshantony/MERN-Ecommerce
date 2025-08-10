@@ -40,7 +40,7 @@ exports.login = async (req, res) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if(req.cookies.token) return res.status(400).json({ message: "Already Logged in" });
+        if (req.cookies.token) return res.status(400).json({ message: "Already Logged in" });
         if (!user)
             return res.status(400).json({ message: "User not found with the mailId, please signup first." });
 
@@ -58,11 +58,8 @@ exports.login = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: "none",
-            partitioned: true,
             maxAge: 24 * 60 * 60 * 1000
         })
-
-
 
         res.status(200).json({
             message: "Login successful",
@@ -87,7 +84,6 @@ exports.logOut = (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: "none",
-            partitioned: true,
         })
         res.status(200).json({ message: "Logged out successfully" });
     } catch (err) {
