@@ -3,7 +3,6 @@ import LoadingScreen from '../components/LoadingScreen'
 import Page401 from "./Page401"
 const ProtectedRoute = ({ children }) => {
     const { user, isLoading } = useAuth();
-
     if (isLoading) return <LoadingScreen />;
 
     if (!user) return <Page401 />

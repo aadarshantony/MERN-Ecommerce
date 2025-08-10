@@ -1,5 +1,4 @@
 import ProductDetails from '../components/product/ProductDetails'
-import FeaturedProducts from '../components/product/FeaturedProducts'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { getProductById } from '../services/productServices'
@@ -12,6 +11,7 @@ import ReviewDisplay from '../components/reviews/ReviewDisplay'
 import { getReviews } from '../services/reviewServices'
 import { addToCart } from '../services/cartServices'
 import toast from 'react-hot-toast'
+import SimilarProducts from '../components/product/SimilarProducts'
 
 const Product = () => {
     const queryClient = useQueryClient();
@@ -23,7 +23,7 @@ const Product = () => {
         enabled: !!productId
     })
 
-    const { data: reviewData, sLoading: reviewIsLoading, isError: reviewIsError, error: reviewError } = useQuery({
+    const { data: reviewData, isLoading: reviewIsLoading, isError: reviewIsError, error: reviewError } = useQuery({
         queryKey: ['reviews', productId],
         queryFn: () => getReviews(productId),
         enabled: !!productId,
@@ -51,10 +51,10 @@ const Product = () => {
                         <section className='flex'>
                             <aside className='m-4'>
                                 <div className=' w-[350px] h-[400px] rounded-md bg-gray-300'>
-                                    <img src={data.product.thumbnail || sampleImg} alt="Product image" className='h-full w-full object-cover rounded-md' />
+                                    <img src={data.product?.thumbnail || sampleImg} alt="Product image" className='h-full w-full object-cover rounded-md' />
                                 </div>
                                 {
-                                    data.product.gallery?.length > 0 && (
+                                    data.product?.gallery?.length > 0 && (
                                         <div className='flex gap-0.5 max-w-[350px] overflow-x-scroll'>
                                             {
                                                 data.product.gallery?.map((url, index) => (
@@ -72,10 +72,15 @@ const Product = () => {
                             <ProductDetails product={data.product} />
                         </section>
 
-                        {/*Featured products*/}
+                        {/*Similar products*/}
                         <section className='p-4 mt-6'>
-                            <h2 className="text-2xl font-semibold mb-6">Featured Products</h2>
-                            <FeaturedProducts />
+                            <h2 className="text-2xl font-semibold mb-6">Similar Products</h2>
+                            <SimilarProducts
+                                category={data.product?.category}
+                                subCategory={data.product?.subCategory}
+                                productId={data.product?._id}
+                            />
+
                         </section>
 
                         {/*Ratings and review section */}

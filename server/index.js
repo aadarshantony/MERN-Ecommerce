@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const productRoutes = require('./routes/productRoutes');
 const authRoutes = require('./routes/authRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const orderRoutes = require('./routes/orderRoutes')
 const connectDB = require('./config/db');
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use('/api/products', productRoutes)
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`Listening to localhost:${process.env.PORT}/api`);

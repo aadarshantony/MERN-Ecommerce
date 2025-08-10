@@ -13,25 +13,29 @@ exports.getProducts = async (req, res) => {
 
 exports.addProduct = async (req, res) => {
     try {
-        const { name, description, price, category, stock, thumbnail, gallery } = req.body;
+        const { name, description, price, category, subCategory, size, stock, thumbnail, gallery } = req.body;
+
         const newProduct = new Product({
             name,
             description,
             price,
             stock,
             category,
+            subCategory,
+            size,
             thumbnail,
             gallery,
         });
+
         await newProduct.save();
 
-        res.status(201).json({ message: 'newProduct saved', product: newProduct })
+        res.status(201).json({ message: 'newProduct saved', product: newProduct });
     } catch (err) {
-        console.error('Error saving the product', err)
+        console.error('Error saving the product', err);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
+};
 
-}
 
 exports.updateProduct = async (req, res) => {
     try {
@@ -80,21 +84,57 @@ exports.deleteProduct = async (req, res) => {
 
 exports.getIndividualProduct = async (req, res) => {
     try {
-        const productId = req.params.id;
-        if (!productId)
-            return res.status(400).json({ message: 'Product ID is required' });
+        const product = await Product.findById(req.params.id);
 
-        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
 
-        if (!product)
-            return res.status(404).json({ message: 'Product not found' });
-
-        res.status(200).json({
-            message: 'Product found with the specified ID',
-            product: product
-        });
+        res.status(200).json({message: "Product found for the corresponding id", product: product});
     } catch (err) {
-        console.error('Error fetching a single product', err);
-        res.status(500).json({ message: 'Server error', error: err.message });
+        console.error("Error fetching product:", err);
+        res.status(500).json({
+            message: "Server error",
+            error: err.message
+        });
     }
 }
+
+exports.getFilteredProducts = async (req, res) => {
+    try {
+        const filters = {};
+
+        // Category filter (array)
+        if (req.query.category) {
+            const categories = req.query.category.split(",");
+            filters.category = { $in: categories };
+        }
+
+        // Subcategory filter (array)
+        if (req.query.subCategory) {
+            const subCategories = req.query.subCategory.split(",");
+            filters.subCategory = { $in: subCategories };
+        }
+
+        // Size filter (array)
+        if (req.query.size) {
+            const sizes = req.query.size.split(",");
+            filters.size = { $in: sizes };
+        }
+
+        // Price range filter
+        if (req.query.priceMin || req.query.priceMax) {
+            filters.price = {};
+            if (req.query.priceMin) filters.price.$gte = Number(req.query.priceMin);
+            if (req.query.priceMax) filters.price.$lte = Number(req.query.priceMax);
+        }
+
+        // Query DB with filters
+        const products = await Product.find(filters);
+
+        res.json({ products });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+ 

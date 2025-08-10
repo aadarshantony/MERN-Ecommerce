@@ -8,7 +8,7 @@ const Products = () => {
     const { openModal, modalConfig } = useModal();
 
     return (
-        <div className='ml-2 bg-white border border-gray-200 shadow-md w-full rounded-md'>
+        <div className='bg-white border border-gray-200 shadow-md w-full rounded-md'>
             <div className='m-8 flex justify-between items-center'>
                 <div>
                     <h2 className='text-2xl font-bold'>Products Overview</h2>

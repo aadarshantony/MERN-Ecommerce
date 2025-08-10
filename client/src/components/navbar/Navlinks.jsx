@@ -5,7 +5,7 @@ const Navlinks = () => {
         <>
             <Link to='/'>Home</Link>
             <Link to='/products'>Shop</Link>
-            <Link to=''>Most Wanted</Link>
+            <Link to='/orders'>My Orders</Link>
             <Link to=''>Contact Us</Link>
         </>
     )

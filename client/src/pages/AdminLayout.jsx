@@ -5,17 +5,22 @@ import { ModalProvider } from '../context/ModalContext';
 
 const AdminLayout = () => (
   <ModalProvider>
-    <div className="bg-[#f9fafb]">
+    <div className="bg-[#f9fafb] h-screen flex flex-col">
+      {/* Top Navbar */}
       <Navbar />
-      <div className="h-[calc(100vh-100px)] max-h-screen max-w-[1800px] m-auto overflow-y-hidden bg-[#f9fafb] flex my-2">
+
+      {/* Main Content Area */}
+      <div className="flex flex-1 max-w-[1800px] w-full mx-auto overflow-hidden">
+        {/* Sidebar */}
         <Sidebar />
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+
+        {/* Page Content */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4">
           <Outlet />
         </div>
       </div>
     </div>
   </ModalProvider>
-
 );
 
 export default AdminLayout;

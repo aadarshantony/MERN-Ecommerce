@@ -1,48 +1,53 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
-const ReviewBreakdown = () => {
+const ReviewBreakdown = ({ reviews }) => {
+    const { averageRating, totalRatings, breakdownPercentages } = useMemo(() => {
+        if (!reviews || reviews.length === 0) {
+            return {
+                averageRating: 0,
+                totalRatings: 0,
+                breakdownPercentages: [0, 0, 0, 0, 0]
+            }
+        }
+
+        const totalRatings = reviews.length
+        const ratingCounts = [0, 0, 0, 0, 0] // index 0 for 5-star, index 4 for 1-star
+
+        reviews.forEach(r => {
+            const rating = r.rating
+            if (rating >= 1 && rating <= 5) {
+                ratingCounts[5 - rating] += 1
+            }
+        })
+
+        const averageRating =
+            reviews.reduce((sum, r) => sum + r.rating, 0) / totalRatings
+
+        const breakdownPercentages = ratingCounts.map(count =>
+            Math.round((count / totalRatings) * 100)
+        )
+
+        return { averageRating, totalRatings, breakdownPercentages }
+    }, [reviews])
+
     return (
         <div className="w-full md:w-1/2 space-y-2">
-            <div className="text-3xl font-bold text-yellow-500">★ 4.1</div>
-            <p className="text-sm text-gray-600">7,512 global ratings</p>
-
+            <div className="text-3xl font-bold text-yellow-500">★ {averageRating.toFixed(1)}</div>
+            <p className="text-sm text-gray-600">{totalRatings} global ratings</p>
 
             <div className="space-y-2 mt-2">
-                <div className="flex items-center gap-2 text-sm">
-                    <span className="w-16">5 star</span>
-                    <div className="w-full h-2 bg-gray-200 rounded">
-                        <div className="h-2 bg-orange-400 rounded w-[58%]"></div>
+                {[5, 4, 3, 2, 1].map((star, i) => (
+                    <div className="flex items-center gap-2 text-sm" key={star}>
+                        <span className="w-16">{star} star</span>
+                        <div className="w-full h-2 bg-gray-200 rounded">
+                            <div
+                                className="h-2 bg-orange-400 rounded"
+                                style={{ width: `${breakdownPercentages[i]}%` }}
+                            ></div>
+                        </div>
+                        <span>{breakdownPercentages[i]}%</span>
                     </div>
-                    <span>58%</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                    <span className="w-16">4 star</span>
-                    <div className="w-full h-2 bg-gray-200 rounded">
-                        <div className="h-2 bg-orange-400 rounded w-[21%]"></div>
-                    </div>
-                    <span>21%</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                    <span className="w-16">3 star</span>
-                    <div className="w-full h-2 bg-gray-200 rounded">
-                        <div className="h-2 bg-orange-400 rounded w-[8%]" ></div>
-                    </div>
-                    <span>8%</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                    <span className="w-16">2 star</span>
-                    <div className="w-full h-2 bg-gray-200 rounded">
-                        <div className="h-2 bg-orange-400 rounded w-[3%]"></div>
-                    </div>
-                    <span>3%</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                    <span className="w-16">1 star</span>
-                    <div className="w-full h-2 bg-gray-200 rounded">
-                        <div className="h-2 bg-orange-400 rounded w-[10%]"></div>
-                    </div>
-                    <span>10%</span>
-                </div>
+                ))}
             </div>
         </div>
     )

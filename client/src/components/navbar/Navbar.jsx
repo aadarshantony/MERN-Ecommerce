@@ -6,10 +6,22 @@ import Navlinks from "./Navlinks";
 import { Link } from 'react-router-dom';
 import { useModal } from '../../context/ModalContext';
 import CartSidebar from '../modals/CartSidebar';
+import { useQuery } from '@tanstack/react-query';
+import { getCartItems } from '../../services/cartServices';
 
 const Navbar = () => {
+
   const { toggleCart } = useModal()
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const { data } = useQuery({
+    queryKey: ['cart'],
+    queryFn: getCartItems,
+    refetchOnWindowFocus: false,
+  });
+
+  const cartCount = data?.cart?.items?.length || 0;
+
   return (
     <>
       <nav className='border-b border-gray-200 fixed  top-0 left-0 w-full z-100'>
@@ -30,8 +42,11 @@ const Navbar = () => {
               <Link to={'/signup'}>
                 <i className='fas fa-user mr-3 cursor-pointer rounded-full p-2 transition-all hover:border-gray-400 hover:border hover:bg-gray-300'></i>
               </Link>
-              <i onClick={toggleCart} className="fas fa-cart-shopping cursor-pointer rounded-full p-2 transition-all hover:border-gray-400 hover:border hover:bg-gray-200"></i>
-
+              <i onClick={toggleCart} className="fas fa-cart-shopping cursor-pointer rounded-full p-2 transition-all hover:border-gray-400 hover:border hover:bg-gray-200 relative">
+                {cartCount > 0 && (
+                  <span className="absolute top-1 right-1 inline-block h-3 w-3 rounded-full bg-red-600 border-2 border-white"></span>
+                )}
+              </i>
             </div>
           </div>
 

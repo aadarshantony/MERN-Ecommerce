@@ -5,6 +5,7 @@ import LoadingSpinner from '../LoadingSpinner';
 import InternalServerError from '../InternalServerError';
 import toast from 'react-hot-toast';
 import { useEffect, useState } from 'react';
+import { submitOrder } from '../../services/orderServices';
 
 const CartSidebar = () => {
     const queryClient = useQueryClient();
@@ -29,6 +30,17 @@ const CartSidebar = () => {
         }
     });
 
+    const { mutate: placeOrder, isLoading: isSubmitting } = useMutation({
+        mutationFn: submitOrder,
+        onSuccess: () => {
+            queryClient.invalidateQueries(['cart']);
+            toast.success('Order placed successfully!');
+            toggleCart();
+        },
+        onError: (err) => {
+            toast.error(err?.message || 'Failed to place order');
+        }
+    });
 
     useEffect(() => {
         if (data?.cart?.items) {
@@ -153,9 +165,14 @@ const CartSidebar = () => {
                                         <p className="text-lg font-semibold text-gray-700">Total</p>
                                         <p className="text-lg font-bold text-gray-900">₹{totalPrice}</p>
                                     </div>
-                                    <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition cursor-pointer">
-                                        Proceed to Checkout
+                                    <button
+                                        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition cursor-pointer"
+                                        onClick={() => placeOrder()}
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? 'Placing Order...' : 'Proceed to Checkout'}
                                     </button>
+
                                 </div>
                             </>
                         )}

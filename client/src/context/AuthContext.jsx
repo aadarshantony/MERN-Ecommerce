@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const location = useLocation()
-    const protectedRoutes = location.pathname.startsWith('/products') || location.pathname.startsWith('/admin');
+    const protectedRoutes = location.pathname.startsWith('/products') || location.pathname.startsWith('/orders') || location.pathname.startsWith('/admin');
 
 
     const { data: user, isLoading, error, refetch } = useQuery({
