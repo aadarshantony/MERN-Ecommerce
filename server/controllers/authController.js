@@ -36,62 +36,79 @@ exports.signup = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
-        if (req.cookies.token) return res.status(400).json({ message: "Already Logged in" });
-        if (!user)
-            return res.status(400).json({ message: "User not found with the mailId, please signup first." });
+    const user = await User.findOne({ email });
+    if (req.cookies.token)
+      return res.status(400).json({ message: "Already Logged in" });
+    if (!user)
+      return res
+        .status(400)
+        .json({ message: "User not found with the mailId, please signup first." });
 
-        const isSamePassword = await bcrypt.compare(password, user.password);
-        if (!isSamePassword)
-            return res.status(400).json({ message: "Invalid Email or Password!" });
+    const isSamePassword = await bcrypt.compare(password, user.password);
+    if (!isSamePassword)
+      return res.status(400).json({ message: "Invalid Email or Password!" });
 
-        const token = jwt.sign(
-            { id: user._id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN }
-        );
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: "none",
-            maxAge: 24 * 60 * 60 * 1000
-        })
+    const cookieValue = [
+      `token=${token}`,
+      'HttpOnly',
+      process.env.NODE_ENV === 'production' ? 'Secure' : '',
+      'SameSite=None',
+      'Partitioned',
+      'Path=/',
+      `Max-Age=${24 * 60 * 60}`,
+    ]
+      .filter(Boolean)
+      .join('; ');
 
-        res.status(200).json({
-            message: "Login successful",
-            token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
-        });
+    res.setHeader('Set-Cookie', cookieValue);
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Server error during login" })
-    }
-}
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error during login" });
+  }
+};
 
 exports.logOut = (req, res) => {
-    try {
-        res.clearCookie("token", {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: "none",
-        })
-        res.status(200).json({ message: "Logged out successfully" });
-    } catch (err) {
-        console.log("Error loggin out: ", err)
-        res.status(500).json({ message: "Internal Server error" })
-    }
+  try {
+    const clearCookieValue = [
+      'token=',
+      'HttpOnly',
+      process.env.NODE_ENV === 'production' ? 'Secure' : '',
+      'SameSite=None',
+      'Partitioned',
+      'Path=/',
+      'Max-Age=0',
+    ]
+      .filter(Boolean)
+      .join('; ');
 
-}
+    res.setHeader('Set-Cookie', clearCookieValue);
+
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.log("Error logging out: ", err);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
 
 exports.getUser = (req, res) => {
     try {
