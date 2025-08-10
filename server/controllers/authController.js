@@ -36,79 +36,86 @@ exports.signup = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (req.cookies.token)
-      return res.status(400).json({ message: "Already Logged in" });
-    if (!user)
-      return res
-        .status(400)
-        .json({ message: "User not found with the mailId, please signup first." });
+        if (req.cookies?.token) {
+            return res.status(400).json({ message: "Already Logged in" });
+        }
 
-    const isSamePassword = await bcrypt.compare(password, user.password);
-    if (!isSamePassword)
-      return res.status(400).json({ message: "Invalid Email or Password!" });
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({
+                message: "User not found with the given Email ID, please signup first."
+            });
+        }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
-    );
+        const isSamePassword = await bcrypt.compare(password, user.password);
+        if (!isSamePassword) {
+            return res.status(400).json({ message: "Invalid Email or Password!" });
+        }
 
-    const cookieValue = [
-      `token=${token}`,
-      'HttpOnly',
-      process.env.NODE_ENV === 'production' ? 'Secure' : '',
-      'SameSite=None',
-      'Partitioned',
-      'Path=/',
-      `Max-Age=${24 * 60 * 60}`,
-    ]
-      .filter(Boolean)
-      .join('; ');
+        // Generate JWT
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN }
+        );
 
-    res.setHeader('Set-Cookie', cookieValue);
 
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error during login" });
-  }
+        const cookieValue = [
+            `token=${token}`,
+            "HttpOnly",
+            process.env.NODE_ENV === "production" ? "Secure" : "",
+            "SameSite=None",
+            "Path=/",
+            `Max-Age=${24 * 60 * 60}`, // 1 day
+        ]
+            .filter(Boolean)
+            .join("; ");
+
+        res.setHeader("Set-Cookie", cookieValue);
+
+        // Respond
+        res.status(200).json({
+            message: "Login successful",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error during login" });
+    }
 };
+
 
 exports.logOut = (req, res) => {
-  try {
-    const clearCookieValue = [
-      'token=',
-      'HttpOnly',
-      process.env.NODE_ENV === 'production' ? 'Secure' : '',
-      'SameSite=None',
-      'Partitioned',
-      'Path=/',
-      'Max-Age=0',
-    ]
-      .filter(Boolean)
-      .join('; ');
+    try {
+        const clearCookieValue = [
+            "token=",
+            "HttpOnly",
+            process.env.NODE_ENV === "production" ? "Secure" : "",
+            "SameSite=None",
+            "Path=/",
+            "Max-Age=0",
+        ]
+            .filter(Boolean)
+            .join("; ");
 
-    res.setHeader('Set-Cookie', clearCookieValue);
+        res.setHeader("Set-Cookie", clearCookieValue);
 
-    res.status(200).json({ message: "Logged out successfully" });
-  } catch (err) {
-    console.log("Error logging out: ", err);
-    res.status(500).json({ message: "Internal Server error" });
-  }
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (err) {
+        console.error("Error logging out:", err);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 };
+
 
 exports.getUser = (req, res) => {
     try {
