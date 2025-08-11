@@ -17,7 +17,7 @@ const ProductHome = ({ product }) => {
           <h2 className='font-medium text-lg'>{product.name}</h2>
         </div>
         <p className='text-sm font-medium'>{product.category}</p>
-        <p className='text-xl font-medium mt-2'>${product.price}</p>
+        <p className='text-xl font-medium mt-2'>₹{product.price}</p>
       </div>
     </div>
   );

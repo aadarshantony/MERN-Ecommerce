@@ -16,7 +16,6 @@ const ProductDetails = ({ product }) => {
             <div className='mt-3 flex items-center gap-4'>
                 <p className='text-green-500 text-xl font-semibold'>
                     ₹{product?.price}
-                    <span className='text-gray-400 line-through text-sm ml-2'>$79.99</span>
                 </p>
             </div>
             {/* Sizes */}
