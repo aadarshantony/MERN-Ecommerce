@@ -170,7 +170,6 @@ const UpdateProductModal = ({ productId }) => {
             gallery: galleryImages.map(img => img.url),
         };
 
-        console.log("Submitting form with data:", dataToSubmit);
         updateProduct({ id: productId, data: dataToSubmit });
     };
 

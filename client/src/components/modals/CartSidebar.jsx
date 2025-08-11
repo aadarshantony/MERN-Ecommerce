@@ -4,21 +4,34 @@ import { deleteFromCart, getCartItems, updateCartQty } from '../../services/cart
 import LoadingSpinner from '../LoadingSpinner';
 import InternalServerError from '../InternalServerError';
 import toast from 'react-hot-toast';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { submitOrder } from '../../services/orderServices';
+import { useAuth } from '../../context/AuthContext';
 
 const CartSidebar = () => {
+    const { user, isLoading: authLoading } = useAuth();
+
     const queryClient = useQueryClient();
     const { toggleCart, isCartOpen } = useModal();
 
-    const [quantities, setQuantities] = useState({});
-
-    const { data, isLoading, isError, error, } = useQuery({
+    const { data, isLoading, isError, error } = useQuery({
         queryKey: ['cart'],
         queryFn: getCartItems,
         refetchOnWindowFocus: false,
-        refetchOnMount: true
+        refetchOnMount: true,
+        enabled:!!user && !authLoading
     });
+
+    // Memoize cartItems so it's stable and doesn't trigger useEffect on every render
+    const cartItems = useMemo(() => data?.cart?.items || [], [data]);
+
+    const [quantities, setQuantities] = useState({});
+
+    // Calculate total price using current quantities
+    const totalPrice = cartItems.reduce((acc, item) => {
+        const qty = quantities[item.product._id] || item.quantity;
+        return acc + item.product.price * qty;
+    }, 0);
 
     const { mutate: updateQuantity } = useMutation({
         mutationFn: updateCartQty,
@@ -43,14 +56,14 @@ const CartSidebar = () => {
     });
 
     useEffect(() => {
-        if (data?.cart?.items) {
+        if (cartItems.length > 0) {
             const initial = {};
-            data.cart.items.forEach(item => {
+            cartItems.forEach(item => {
                 initial[item.product._id] = item.quantity;
             });
             setQuantities(initial);
         }
-    }, [data]);
+    }, [cartItems]);
 
     const cartDeleteHandler = async (productId) => {
         try {
@@ -65,6 +78,8 @@ const CartSidebar = () => {
 
     const incrementQty = (productId) => {
         const item = cartItems.find(item => item.product._id === productId);
+        if (!item) return;
+
         const currentQty = quantities[productId] || item.quantity;
         const maxStock = item.product.stock;
 
@@ -77,9 +92,10 @@ const CartSidebar = () => {
         }
     };
 
-
     const decrementQty = (productId) => {
         const item = cartItems.find(item => item.product._id === productId);
+        if (!item) return;
+
         const currentQty = quantities[productId] || item.quantity;
 
         if (currentQty > 1) {
@@ -89,21 +105,13 @@ const CartSidebar = () => {
         }
     };
 
-
     if (!isCartOpen) return null;
-
-    const cartItems = data?.cart?.items || [];
-
-    const totalPrice = cartItems.reduce((acc, item) => {
-        const qty = quantities[item.product._id] || item.quantity;
-        return acc + item.product.price * qty;
-    }, 0);
 
     return (
         <div id="cart-sidebar-modal" tabIndex="-1" aria-hidden="true"
             className="fixed inset-0 z-200 overflow-y-auto overflow-x-hidden backdrop-brightness-50">
             <div className="relative w-full p-4">
-                <div className="absolute bg-white shadow-lg h-screen w-96 top-0 right-0">
+                <div className="absolute bg-white shadow-lg h-screen lg:w-96 top-0 right-0">
 
                     {/* Header */}
                     <div className="flex items-center justify-between p-5 border-b border-gray-200">

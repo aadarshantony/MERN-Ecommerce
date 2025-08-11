@@ -4,7 +4,6 @@ import api from "../api";
 export const signupUser = async (userData) => {
   try {
     const res = await api.post('/auth/signup', userData);
-    console.log(res.data.message)
     return res.data;
   } catch (err) {
     throw err.response?.data || err;

@@ -8,10 +8,8 @@ import { useModal } from '../../context/ModalContext';
 import CartSidebar from '../modals/CartSidebar';
 import { useQuery } from '@tanstack/react-query';
 import { getCartItems } from '../../services/cartServices';
-import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
-  const { user } = useAuth();
   const { toggleCart } = useModal()
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -19,7 +17,7 @@ const Navbar = () => {
     queryKey: ['cart'],
     queryFn: getCartItems,
     refetchOnWindowFocus: false,
-    enabled: !!user,
+    retry: false
   });
 
   const cartCount = data?.cart?.items?.length || 0;

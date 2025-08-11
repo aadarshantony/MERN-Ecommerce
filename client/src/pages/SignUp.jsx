@@ -27,9 +27,8 @@ const SignUp = () => {
                 password: data?.password,
             };
 
-            const res = await signupUser(userDetails);
+            await signupUser(userDetails);
             toast.success("Account Created. Please proceed to login.")
-            console.log(res);
         } catch (err) {
             console.error("SignUp failed: ", err.response?.data || err.message);
             toast.error(err.message)
@@ -44,7 +43,7 @@ const SignUp = () => {
 
     return (
         <div className='flex items-center justify-center min-h-screen px-4'>
-            <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-xl ">
+            <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-xl  mt-14 border border-gray-300">
                 <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Create Account</h2>
 
                 <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>

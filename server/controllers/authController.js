@@ -38,6 +38,7 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        const isProd = process.env.NODE_ENV === "production";
 
         if (req.cookies?.token) {
             return res.status(400).json({ message: "Already Logged in" });
@@ -64,14 +65,12 @@ exports.login = async (req, res) => {
         const cookieValue = [
             `token=${token}`,
             "HttpOnly",
-            process.env.NODE_ENV === "production" ? "Secure" : "",
-            "SameSite=None",
-            "Partitioned",
+            "Secure", // Always required when using Partitioned
+            `SameSite=${isProd ? "None" : "Lax"}`,
+            ...(isProd ? ["Partitioned"] : []), // Only in prod, unless you have HTTPS locally
             "Path=/",
-            `Max-Age=${24 * 60 * 60}`,
-        ]
-            .filter(Boolean)
-            .join("; ");
+            `Max-Age=${24 * 60 * 60}`
+        ].filter(Boolean).join("; ");
 
         res.setHeader("Set-Cookie", cookieValue);
 
@@ -91,21 +90,19 @@ exports.login = async (req, res) => {
     }
 };
 
-
-
 exports.logOut = (req, res) => {
     try {
+        const isProd = process.env.NODE_ENV === "production";
+
         const clearCookieValue = [
             "token=",
             "HttpOnly",
-            process.env.NODE_ENV === "production" ? "Secure" : "",
-            "SameSite=None",
-            "Partitioned",
+            "Secure", // Always secure if Partitioned could be set
+            `SameSite=${isProd ? "None" : "Lax"}`,
+            ...(isProd ? ["Partitioned"] : []),
             "Path=/",
-            "Max-Age=0", // delete immediately
-        ]
-            .filter(Boolean)
-            .join("; ");
+            "Max-Age=0"
+        ].filter(Boolean).join("; ");
 
         res.setHeader("Set-Cookie", clearCookieValue);
 
@@ -115,6 +112,7 @@ exports.logOut = (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
 
 
 exports.getUser = (req, res) => {

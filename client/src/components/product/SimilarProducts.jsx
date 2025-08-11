@@ -15,7 +15,6 @@ const SimilarProducts = ({ category, subCategory, productId }) => {
                 const filtered = products.filter(p => p._id !== productId);
 
                 setSimilarProducts(filtered);
-                console.log(similarProducts)
             } catch (error) {
                 console.error("Failed to load similar products:", error);
             } finally {
