@@ -6,20 +6,25 @@ import { useForm } from 'react-hook-form'
 import { loginUser, logoutUser } from '../services/authServices'
 import { useQueryClient } from '@tanstack/react-query'
 import { Toaster, toast } from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext'
 
 const schema = yup.object().shape({
     email: yup.string().email("Invalid Email! Please enter a valid email.").required("Email is required"),
     password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
 })
 
+
 const Login = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
     const [showPass, setShowpass] = useState(false);
 
+    const { refetch } = useAuth();
+
     const onSubmit = async (data) => {
         try {
             await loginUser(data);
+            await refetch();
             toast.success("Successfully logged in!");
             await queryClient.invalidateQueries(['cart']);
             navigate('/products');
@@ -44,7 +49,7 @@ const Login = () => {
 
     return (
         <div className='flex items-center justify-center min-h-screen px-4'>
-            
+
             <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-xl">
                 <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Welcome Back</h2>
 

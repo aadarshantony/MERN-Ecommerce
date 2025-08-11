@@ -3,8 +3,8 @@ const Cart = require("../models/cartSchema");
 
 exports.getCart = async (req, res) => {
     try {
-        if (!req.user || req.user.id)
-            return res.status(401).json({ message: 'Please login to view cart' });
+        if (!req.user?.id)
+            return res.status(200).json({ message: "Fetched Cart", cart: null });
 
         const userId = req.user.id;
         const userCart = await Cart.findOne({ user: userId })
