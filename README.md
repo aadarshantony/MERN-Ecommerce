@@ -37,7 +37,6 @@ A fully functional **Fashion E-commerce** platform built with the **MERN stack**
 
 **Other Tools:**
 - JWT for authentication
-- Multer for file uploads
 - Cloudinary for image storage
 - dotenv for environment config
 
